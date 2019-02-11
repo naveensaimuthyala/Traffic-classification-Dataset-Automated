@@ -1,0 +1,48 @@
+Install Docker and Docker compose:
+1. curl -fsSL get.docker.com -o /tmp/get-docker.sh
+2. sh /tmp/get-docker.sh
+3. curl -Lhttps://github.com/docker/compose/releases/download/1.19.0/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
+4. chmod +x /usr/local/bin/docker-compose
+5. usermod -aG docker vagrant
+#2
+Basic steps for deployment are currently as follows:
+1. install docker and docker-compose (see above)
+2. copy the mltat-full-0.0.1.tgz onto host machine
+3. tar xvf mltat-full-0.0.1.tgz
+4. cd mltat-full-0.0.1/
+5. ./mltat load mltat-images-0.0.1.tgz
+6. ./mltat up
+7. ./mltat init_db
+8. ./mltat init_hdfs
+9. ./mltat createadmin
+10. ./mltat down
+11. ./mltat up
+
+#3
+Creating combined file from pcap and labels will be done with:
+./mltat data combine --labels <labels.csv> --pcap <input.pcap>
+
+To use the web gui open a browser to localhost from your VM and login with the username and password set during the "./mltat createadmin" command.
+1. Use this to create, train, and enable a model or multiple.
+2. start mloop (see above)
+3. put pcap into hdfs (see above)
+
+
+#4
+Starting the mloop will be done with:
+./mltat data mloop
+
+# 5
+Inserting data into the hdfs directory can currently be done with:
+1. docker cp <input.pcap> mltat-hdfs-standalone:/opt/hadoop
+2. docker-compose exec hdfs-standalone bash
+3. hdfs dfs -put <input.pcap> /mltat
+4. exit
+
+###
+docker-compose exec hdfs-standalone bash
+docker logs mltat-hdfs-standalone
+docker ps
+hdfs dfs -mkdir /mltat
+hdfs dfs -mkdir /out
+
